@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+    <link rel="stylesheet" href="static/css/styles.css"> <!-- Link to your custom CSS file -->
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Todo App</h1>
+        </header>
+        <div class="todo-container">
+            <!-- Add Todo Section (30% width) -->
+            <div class="add-todo">
+                <h2>Add Todo</h2>
+                <form action="/add" method="post">
+                    <input type="text" name="title" placeholder="Enter Todo" required>
+                    <button type="submit">Add</button>
+                </form>
+            </div>
+
+            <!-- Todo List Section (70% width) -->
+            <div class="todo-list">
+                <h2>Todo List</h2>
+                <ul>
+                    {% for todo in todos %}
+                    <li>
+                        <span class="todo-title">{{ todo.title }}</span>
+                        <div class="actions">
+                            <button class="edit-btn">Edit</button>
+                            <form action="/delete/{{ todo.id }}" method="post" style="display: inline;">
+                                <button type="submit" class="delete-btn">Delete</button>
+                            </form>
+                            <form action="/edit/{{ todo.id }}" method="post" class="edit-form">
+                                <input type="text" name="title" class="edit-input" value="{{ todo.title }}" required>
+                                <button type="submit">Save</button>
+                            </form>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for edit button functionality -->
+    <script>
+        const editButtons = document.querySelectorAll('.edit-btn');
+        editButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const listItem = button.closest('li');
+                const editForm = listItem.querySelector('.edit-form');
+                const todoTitle = listItem.querySelector('.todo-title');
+
+                // Show edit form and hide todo title
+                editForm.style.display = 'block';
+                todoTitle.style.display = 'none';
+
+                // Focus on the edit input field
+                const editInput = editForm.querySelector('.edit-input');
+                editInput.focus();
+
+                // Hide other edit forms
+                const allEditForms = document.querySelectorAll('.edit-form');
+                allEditForms.forEach(form => {
+                    if (form !== editForm) {
+                        form.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
